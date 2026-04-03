@@ -49,22 +49,11 @@ impl DesktopSignerApp {
         let available_libraries = config.get_all_libraries();
         
         // Initialize signing service
-        let mut signing_service = SigningService::new();
+        let signing_service = SigningService::new();
         
-        // Try to auto-load saved library
-        if let Some(ref lib_path) = config.pkcs11_library_path {
-            if std::path::Path::new(lib_path).exists() {
-                match signing_service.initialize_pkcs11(lib_path) {
-                    Ok(_) => {
-                        tracing::info!("Auto-loaded PKCS#11 library: {}", lib_path);
-                    }
-                    Err(e) => {
-                        tracing::warn!("Failed to auto-load library: {}", e);
-                    }
-                }
-            }
-        }
-        
+        // NOTE: We do NOT auto-load the saved library to prevent PIN blocking issues.
+        // The user must manually click "Load Library" button to connect.
+        // This prevents accidental login attempts with cached/empty PINs.
         let selected_library = config.pkcs11_library_path.clone();
         
         let mut app = Self {
@@ -93,12 +82,32 @@ impl DesktopSignerApp {
             is_logged_in: false,
         };
         
-        // If library is loaded, try to get certificates
-        if app.signing_service.is_initialized() {
-            app.refresh_certificates();
-        }
-        
+        // Do NOT auto-refresh certificates on startup to prevent PIN blocking.
+        // User must manually login first.
         app
+    }
+
+    /// Load the saved library from config (user must click button)
+    pub fn load_saved_library(&mut self) {
+        if let Some(ref lib_path) = self.selected_library {
+            if std::path::Path::new(lib_path).exists() {
+                self.status_message = format!("Зареждане на библиотека: {}", lib_path);
+                
+                match self.signing_service.initialize_pkcs11(lib_path) {
+                    Ok(_) => {
+                        self.status_message = "✓ Библиотеката е заредена. Моля, въведете ПИН.".to_string();
+                    }
+                    Err(e) => {
+                        self.status_message = format!("❌ Грешка при зареждане: {}", e);
+                    }
+                }
+            } else {
+                self.status_message = "❌ Библиотеката не съществува".to_string();
+                self.selected_library = None;
+                self.config.pkcs11_library_path = None;
+                let _ = self.config.save();
+            }
+        }
     }
 
     /// Select PKCS#11 library
@@ -536,7 +545,7 @@ impl DesktopSignerApp {
             // Show current selection
             if let Some(ref lib) = self.selected_library {
                 ui.horizontal(|ui| {
-                    ui.label("Текуща библиотека:");
+                    ui.label("Запаметена библиотека:");
                     ui.colored_label(egui::Color32::GREEN, lib);
                     
                     if ui.button("🔄 Промени").clicked() {
@@ -556,6 +565,15 @@ impl DesktopSignerApp {
                     } else {
                         ui.colored_label(egui::Color32::YELLOW, "⚠ Не сте влезли в токена");
                     }
+                } else {
+                    // Library path is saved but not loaded - show load button
+                    ui.add_space(10.0);
+                    ui.horizontal(|ui| {
+                        ui.colored_label(egui::Color32::YELLOW, "⚠ Библиотеката не е заредена");
+                        if ui.button("🔄 Зареди библиотеката").clicked() {
+                            self.load_saved_library();
+                        }
+                    });
                 }
             } else {
                 ui.colored_label(egui::Color32::RED, "⚠ Не е избрана библиотека");
