@@ -2,10 +2,12 @@
 
 **Open Source Desktop Application for Electronic Document Signing**
 
+![KIMI Signer Screenshot](Scr_20260404_024350.png)
+
 KIMI Signer е безплатно приложение с отворен код за електронно подписване на документи с квалифициран електронен подпис (КЕП). Поддържа CAdES-BES формат според европейския стандарт ETSI TS 101 733.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Rust](https://img.shields.io/badge/Rust-1.70%2B-orange.svg)](https://www.rust-lang.org/)
+[![Rust](https://img.shields.io/badge/Rust-1.93.0-orange.svg)](https://www.rust-lang.org/)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-blue.svg)]()
 
 ## 📋 Съдържание
@@ -106,6 +108,10 @@ cargo build --release
 ```
 
 ### Бинарни файлове
+
+| Платформа | Линк за изтегляне |
+|-----------|-------------------|
+| **Debian 12-13** | [⬇️ Изтегли](https://s3.g.s4.mega.io/smxakyb2sjkiwg33zjlylnnr4wtfvugvzvqkz/cyberbuch/drugi/kimi-signer) |
 
 Изтеглете последната версия от [Releases](https://github.com/katehonz/kimi-signer/releases) страницата.
 
@@ -232,7 +238,7 @@ kimi-signer/
 
 | Компонент | Технология |
 |-----------|-----------|
-| Език | Rust 1.70+ |
+| Език | Rust 1.93.0 |
 | GUI | egui 0.28 |
 | PKCS#11 | cryptoki 0.7 |
 | Криптография | OpenSSL |
