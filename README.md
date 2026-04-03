@@ -16,6 +16,7 @@ KIMI Signer е безплатно приложение с отворен код 
 - [Инсталация](#инсталация)
 - [Използване](#използване)
 - [Ръчно избиране на PKCS#11 библиотека](#ръчно-избиране-на-pkcs11-библиотека)
+- [ETSI Валидация](#etsi-валидация)
 - [Техническа информация](#техническа-информация)
 - [Отстраняване на проблеми](#отстраняване-на-проблеми)
 - [Лиценз](#лиценз)
@@ -28,13 +29,14 @@ KIMI Signer е безплатно приложение с отворен код 
 - **Detached подпис** (.p7s) - подписът е в отделен файл
 - **SHA-256** хеширане
 - Поддръжка на **RSA** ключове
+- **OCSP** вграждане за време на подписване
 
 ### 🖥️ Потребителски интерфейс
 - Интуитивен графичен интерфейс (GUI) с egui
-- Drag & drop на файлове
 - Лесен избор на PKCS#11 библиотека
 - Запомняне на настройки
 - Статус бар с информация
+- **Безопасно зареждане** - ръчно зареждане на библиотеката за предотвратяване на блокиране на PIN
 
 ### 🔧 Конфигурация
 - Автоматично откриване на PKCS#11 библиотеки
@@ -93,7 +95,7 @@ sudo dnf install openssl-devel pkgconfig gtk3
 
 ```bash
 # Клониране на репозиторито
-git clone https://github.com/yourusername/kimi-signer.git
+git clone https://github.com/katehonz/kimi-signer.git
 cd kimi-signer
 
 # Компилиране в release режим
@@ -105,7 +107,7 @@ cargo build --release
 
 ### Бинарни файлове
 
-Изтеглете последната версия от [Releases](https://github.com/yourusername/kimi-signer/releases) страницата.
+Изтеглете последната версия от [Releases](https://github.com/katehonz/kimi-signer/releases) страницата.
 
 ## 📖 Използване
 
@@ -116,13 +118,18 @@ cargo build --release
 2. Изберете вашия токен от списъка с автоматично открити библиотеки
 3. Или посочете ръчно пътя до библиотеката
 
-> 💡 **Съвет:** Библиотеката се запомня и ще се зареди автоматично при следващо стартиране.
+При следващо стартиране:
+1. Библиотеката е запаметена, но **НЕ се зарежда автоматично**
+2. Натиснете **"🔄 Зареди библиотеката"** за да се свържете с токена
+
+> 💡 **Важно:** Библиотеката се запаметява, но се зарежда ръчно за предотвратяване на блокиране на PIN при стартиране.
 
 ### 2️⃣ Вход в токена
 
 1. Поставете токена в USB порта
-2. Въведете **ПИН кода** в полето
-3. Натиснете **"Вход"**
+2. Натиснете **"🔄 Зареди библиотеката"** (ако все още не сте)
+3. Въведете **ПИН кода** в полето
+4. Натиснете **"Вход"**
 
 ### 3️⃣ Избор на документ
 
@@ -146,7 +153,7 @@ cargo build --release
 ### 6️⃣ Подписване
 
 1. Натиснете **"✍️ Подпиши документа"**
-2. Потвърдете с ПИН код
+2. Потвърдете с ПИН код (ако се изисква)
 3. Готово! Файлът е подписан.
 
 ## 🔧 Ръчно избиране на PKCS#11 библиотека
@@ -182,6 +189,27 @@ sudo find /usr -name "*p11*" -o -name "*pkcs11*"
 /usr/local/lib/libeTPkcs11.dylib
 /usr/local/lib/opensc-pkcs11.so
 ```
+
+## ✅ ETSI Валидация
+
+Подписите, създадени с KIMI Signer, са валидирани с **EU DSS (Digital Signature Service)** и отговарят на стандартите:
+
+- ✅ **ETSI TS 101 733** - CAdES-BES формат
+- ✅ **ETSI EN 319 102-1** - Signature validation
+- ✅ **QESig** - Qualified Electronic Signature
+
+### Тестови резултати
+
+Вижте `test-result/` директорията за детайлни отчети:
+- `DSS-ETSI-Report.xml` - ETSI валидационен отчет
+- `DSS-Detailed-report.pdf` - Подробен PDF отчет
+
+**Всички проверки:** PASSED ✅
+- Format Checking
+- Identification of Signing Certificate
+- Cryptographic Verification
+- Signature Acceptance Validation
+- X.509 Certificate Validation
 
 ## 🛠️ Техническа информация
 
@@ -224,9 +252,11 @@ kimi-signer/
 - Опитайте ръчно да посочите пътя до .dll/.so файла
 - Рестартирайте приложението след инсталация на драйвър
 
-### "Грешен ПИН"
+### "Грешен ПИН" или "Токенът е блокиран"
+- Уверете се, че сте натиснали **"🔄 Зареди библиотеката"** преди да въведете ПИН
 - Уверете се, че използвате правилния ПИН код за токена
 - Проверете дали токенът не е заключен след многократни грешни опити
+- Ако токенът е заключен, извадете го и го поставете отново
 
 ### "Не е намерен сертификат"
 - Уверете се, че сте влезли с ПИН кода
@@ -241,9 +271,9 @@ kimi-signer/
 ### Конфигурационен файл
 
 Настройките се съхраняват в:
-- **Windows**: `%APPDATA%\kimi-signer\config.toml`
-- **Linux**: `~/.config/kimi-signer/config.toml`
-- **macOS**: `~/Library/Application Support/kimi-signer/config.toml`
+- **Windows**: `%APPDATA%\desktop-signer\config.toml`
+- **Linux**: `~/.config/desktop-signer/config.toml`
+- **macOS**: `~/Library/Application Support/desktop-signer/config.toml`
 
 ## 🤝 Принос
 
@@ -251,7 +281,7 @@ kimi-signer/
 
 ### Докладване на бъгове
 
-Моля, използвайте [GitHub Issues](https://github.com/yourusername/kimi-signer/issues) за докладване на бъгове или предложения за нови функции.
+Моля, използвайте [GitHub Issues](https://github.com/katehonz/kimi-signer/issues) за докладване на бъгове или предложения за нови функции.
 
 ## 📄 Лиценз
 
@@ -278,12 +308,12 @@ copies or substantial portions of the Software.
 - [egui](https://github.com/emilk/egui) - Лек и бърз GUI framework
 - [cryptoki](https://github.com/parallaxsecond/rust-cryptoki) - Rust PKCS#11 bindings
 - [OpenSSL](https://www.openssl.org/) - Криптографска библиотека
+- [EU DSS](https://github.com/esig/dss) - ETSI валидация
 - Всички приносители към проекта
 
 ## 📞 Контакти
 
-- GitHub: [https://github.com/yourusername/kimi-signer](https://github.com/yourusername/kimi-signer)
-- Email: your.email@example.com
+- GitHub: [https://github.com/katehonz/kimi-signer](https://github.com/katehonz/kimi-signer)
 
 ---
 
