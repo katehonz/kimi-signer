@@ -17,6 +17,18 @@ Thumbs.db
 # Config
 /config.toml
 
+# Logs
+*.log
+*.log.*
+logs/
+
+# Binary files
+*.exe
+*.dll
+*.so
+*.dylib
+*.bin
+
 # Test files
 *.p7m
 *.p7s
