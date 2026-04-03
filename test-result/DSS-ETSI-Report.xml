@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><vr:ValidationReport xmlns:XAdES="http://uri.etsi.org/01903/v1.3.2#" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:tsl="http://uri.etsi.org/02231/v2#" xmlns:vr="http://uri.etsi.org/19102/v1.4.1#">
+    <vr:SignatureValidationReport>
+        <vr:SignatureIdentifier id="SIGNATURE_DIMITAR-VLADOV-GIGOV_20260403-2137">
+            <vr:DigestAlgAndValue>
+                <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+                <ds:DigestValue>FZ6eIK3W79DxHvGyukG/nAMcIGRr3Rx3jCdZtHjxvZI=</ds:DigestValue>
+            </vr:DigestAlgAndValue>
+            <ds:SignatureValue>gP8A29qoTXRxlpvl5ESQUWE/sQD4mPb7IjpMinAXmTry/floEPlmkOHAVt6Bs7PuAbUHT/6uefmKKIVFSapsVNzi7ON5kWW+9s02VovH6S9WFI04IhNvNRjQ1unlkjOWAzf/jl7dvLctQBhPkHrI9ipJqJRUEQlhn/5+aSkjMzqUblGVauL0YhoILIwHFMRPMK7L+3pQcKu2VaAbwI0fS+zSKMwvQeSmU8Zxroor7zuiqI3QvquMiNWqMF2nH332MY8hrVNqRQ+olJwJh+C/yy5acsU2dUpB1piS7u3KPgofVdXwymwzO4GdgAvwh7PMSGGDidUkbWhxftxejTvQqw==</ds:SignatureValue>
+            <vr:HashOnly>false</vr:HashOnly>
+            <vr:DocHashOnly>false</vr:DocHashOnly>
+        </vr:SignatureIdentifier>
+        <vr:ValidationConstraintsEvaluationReport>
+            <vr:ValidationConstraint>
+                <vr:ValidationConstraintIdentifier>urn:cef:dss:bbb:formatChecking</vr:ValidationConstraintIdentifier>
+                <vr:ConstraintStatus>
+                    <vr:Status>urn:etsi:019102:constraintStatus:applied</vr:Status>
+                </vr:ConstraintStatus>
+                <vr:ValidationStatus>
+                    <vr:MainIndication>urn:etsi:019102:mainindication:passed</vr:MainIndication>
+                </vr:ValidationStatus>
+            </vr:ValidationConstraint>
+            <vr:ValidationConstraint>
+                <vr:ValidationConstraintIdentifier>urn:cef:dss:bbb:identificationOfTheSigningCertificate</vr:ValidationConstraintIdentifier>
+                <vr:ConstraintStatus>
+                    <vr:Status>urn:etsi:019102:constraintStatus:applied</vr:Status>
+                </vr:ConstraintStatus>
+                <vr:ValidationStatus>
+                    <vr:MainIndication>urn:etsi:019102:mainindication:passed</vr:MainIndication>
+                </vr:ValidationStatus>
+            </vr:ValidationConstraint>
+            <vr:ValidationConstraint>
+                <vr:ValidationConstraintIdentifier>urn:cef:dss:bbb:validationContextInitialization</vr:ValidationConstraintIdentifier>
+                <vr:ConstraintStatus>
+                    <vr:Status>urn:etsi:019102:constraintStatus:applied</vr:Status>
+                </vr:ConstraintStatus>
+                <vr:ValidationStatus>
+                    <vr:MainIndication>urn:etsi:019102:mainindication:passed</vr:MainIndication>
+                </vr:ValidationStatus>
+            </vr:ValidationConstraint>
+            <vr:ValidationConstraint>
+                <vr:ValidationConstraintIdentifier>urn:cef:dss:bbb:cryptographicVerification</vr:ValidationConstraintIdentifier>
+                <vr:ConstraintStatus>
+                    <vr:Status>urn:etsi:019102:constraintStatus:applied</vr:Status>
+                </vr:ConstraintStatus>
+                <vr:ValidationStatus>
+                    <vr:MainIndication>urn:etsi:019102:mainindication:passed</vr:MainIndication>
+                </vr:ValidationStatus>
+            </vr:ValidationConstraint>
+            <vr:ValidationConstraint>
+                <vr:ValidationConstraintIdentifier>urn:cef:dss:bbb:signatureAcceptanceValidation</vr:ValidationConstraintIdentifier>
+                <vr:ConstraintStatus>
+                    <vr:Status>urn:etsi:019102:constraintStatus:applied</vr:Status>
+                </vr:ConstraintStatus>
+                <vr:ValidationStatus>
+                    <vr:MainIndication>urn:etsi:019102:mainindication:passed</vr:MainIndication>
+                </vr:ValidationStatus>
+            </vr:ValidationConstraint>
+            <vr:ValidationConstraint>
+                <vr:ValidationConstraintIdentifier>urn:cef:dss:bbb:x509CertificateValidation</vr:ValidationConstraintIdentifier>
+                <vr:ConstraintStatus>
+                    <vr:Status>urn:etsi:019102:constraintStatus:applied</vr:Status>
+                </vr:ConstraintStatus>
+                <vr:ValidationStatus>
+                    <vr:MainIndication>urn:etsi:019102:mainindication:passed</vr:MainIndication>
+                </vr:ValidationStatus>
+            </vr:ValidationConstraint>
+            <vr:ValidationConstraint>
+                <vr:ValidationConstraintIdentifier>urn:cef:dss:bbb:pastSignatureValidation</vr:ValidationConstraintIdentifier>
+                <vr:ConstraintStatus>
+                    <vr:Status>urn:etsi:019102:constraintStatus:disabled</vr:Status>
+                </vr:ConstraintStatus>
+            </vr:ValidationConstraint>
+            <vr:ValidationConstraint>
+                <vr:ValidationConstraintIdentifier>urn:cef:dss:bbb:pastCertificateValidation</vr:ValidationConstraintIdentifier>
+                <vr:ConstraintStatus>
+                    <vr:Status>urn:etsi:019102:constraintStatus:disabled</vr:Status>
+                </vr:ConstraintStatus>
+            </vr:ValidationConstraint>
+            <vr:ValidationConstraint>
+                <vr:ValidationConstraintIdentifier>urn:cef:dss:bbb:validationTimeSliding</vr:ValidationConstraintIdentifier>
+                <vr:ConstraintStatus>
+                    <vr:Status>urn:etsi:019102:constraintStatus:disabled</vr:Status>
+                </vr:ConstraintStatus>
+            </vr:ValidationConstraint>
+        </vr:ValidationConstraintsEvaluationReport>
+        <vr:ValidationTimeInfo>
+            <vr:ValidationTime>2026-04-03T21:39:57Z</vr:ValidationTime>
+            <vr:BestSignatureTime>
+                <vr:POETime>2026-04-03T21:39:57Z</vr:POETime>
+                <vr:TypeOfProof>urn:etsi:019102:poetype:validation</vr:TypeOfProof>
+            </vr:BestSignatureTime>
+        </vr:ValidationTimeInfo>
+        <vr:SignersDocument>
+            <vr:DigestAlgAndValue>
+                <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+                <ds:DigestValue>pq/GMq3QIOfy2aa3cDfHwAAtMA3MD3SLwg6uq+e7Yzc=</ds:DigestValue>
+            </vr:DigestAlgAndValue>
+            <vr:SignersDocumentRepresentation VOReference="DOCUMENT_accountRequestEdit-308924-pdf"/>
+        </vr:SignersDocument>
+        <vr:SignatureAttributes>
+            <vr:SigningTime Signed="true">
+                <vr:Time>2026-04-03T21:37:51Z</vr:Time>
+            </vr:SigningTime>
+            <vr:SigningCertificate Signed="true">
+                <vr:AttributeObject VOReference="CERTIFICATE_DIMITAR-VLADOV-GIGOV_20240319-1232"/>
+            </vr:SigningCertificate>
+            <vr:DataObjectFormat Signed="true">
+                <vr:ContentType>1.2.840.113549.1.7.1</vr:ContentType>
+            </vr:DataObjectFormat>
+            <vr:MessageDigest Signed="true">
+                <vr:Digest>pq/GMq3QIOfy2aa3cDfHwAAtMA3MD3SLwg6uq+e7Yzc=</vr:Digest>
+            </vr:MessageDigest>
+        </vr:SignatureAttributes>
+        <vr:SignerInformation Pseudonym="false">
+            <vr:SignerCertificate VOReference="CERTIFICATE_DIMITAR-VLADOV-GIGOV_20240319-1232"/>
+            <vr:Signer>DIMITAR VLADOV GIGOV</vr:Signer>
+        </vr:SignerInformation>
+        <vr:SignatureQuality>
+            <vr:SignatureQualityInformation>urn:cef:dss:signatureQualification:QESig</vr:SignatureQualityInformation>
+        </vr:SignatureQuality>
+        <vr:SignatureValidationProcess>
+            <vr:SignatureValidationProcessID>urn:etsi:019102:validationprocess:LTA</vr:SignatureValidationProcessID>
+        </vr:SignatureValidationProcess>
+        <vr:SignatureValidationStatus>
+            <vr:MainIndication>urn:etsi:019102:mainindication:total-passed</vr:MainIndication>
+            <vr:AssociatedValidationReportData>
+                <vr:TrustAnchor VOReference="CERTIFICATE_B-Trust-Operational-Qualified-CA_20180601-1344"/>
+                <vr:CertificateChain>
+                    <vr:SigningCertificate VOReference="CERTIFICATE_DIMITAR-VLADOV-GIGOV_20240319-1232"/>
+                    <vr:TrustAnchor VOReference="CERTIFICATE_B-Trust-Operational-Qualified-CA_20180601-1344"/>
+                </vr:CertificateChain>
+                <vr:CryptoInformation>
+                    <vr:ValidationObjectId VOReference="SIGNATURE_DIMITAR-VLADOV-GIGOV_20260403-2137"/>
+                    <vr:Algorithm>http://www.w3.org/2001/04/xmldsig-more#rsa-sha256</vr:Algorithm>
+                    <vr:SecureAlgorithm>true</vr:SecureAlgorithm>
+                    <vr:NotAfter>2029-01-01T00:00:00Z</vr:NotAfter>
+                </vr:CryptoInformation>
+            </vr:AssociatedValidationReportData>
+        </vr:SignatureValidationStatus>
+    </vr:SignatureValidationReport>
+    <vr:SignatureValidationObjects>
+        <vr:ValidationObject id="CERTIFICATE_B-Trust-Operational-Qualified-CA_20180601-1344">
+            <vr:ObjectType>urn:etsi:019102:validationObject:certificate</vr:ObjectType>
+            <vr:ValidationObjectRepresentation>
+                <vr:DigestAlgAndValue>
+                    <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+                    <ds:DigestValue>SZqcqLR+6EQ3+QuW+0BBPqKT+bOUKhYIN6DGew7Fugw=</ds:DigestValue>
+                </vr:DigestAlgAndValue>
+            </vr:ValidationObjectRepresentation>
+            <vr:POE>
+                <vr:POETime>2026-04-03T21:39:57Z</vr:POETime>
+                <vr:TypeOfProof>urn:etsi:019102:poetype:validation</vr:TypeOfProof>
+            </vr:POE>
+        </vr:ValidationObject>
+        <vr:ValidationObject id="CERTIFICATE_DIMITAR-VLADOV-GIGOV_20240319-1232">
+            <vr:ObjectType>urn:etsi:019102:validationObject:certificate</vr:ObjectType>
+            <vr:ValidationObjectRepresentation>
+                <vr:DigestAlgAndValue>
+                    <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+                    <ds:DigestValue>TAqy2XiwdVSE8CkieEqSH8PT2whP1fPRRTuCzd3oAr8=</ds:DigestValue>
+                </vr:DigestAlgAndValue>
+            </vr:ValidationObjectRepresentation>
+            <vr:POE>
+                <vr:POETime>2026-04-03T21:39:57Z</vr:POETime>
+                <vr:TypeOfProof>urn:etsi:019102:poetype:validation</vr:TypeOfProof>
+            </vr:POE>
+        </vr:ValidationObject>
+        <vr:ValidationObject id="CERTIFICATE_B-Trust-Qualified-OCSP-Authority_20220421-1245">
+            <vr:ObjectType>urn:etsi:019102:validationObject:certificate</vr:ObjectType>
+            <vr:ValidationObjectRepresentation>
+                <vr:DigestAlgAndValue>
+                    <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+                    <ds:DigestValue>rZIeYxDAdih3Qfo3Zrh0+/Nx+JEqlMSR+jC15foKn2g=</ds:DigestValue>
+                </vr:DigestAlgAndValue>
+            </vr:ValidationObjectRepresentation>
+            <vr:POE>
+                <vr:POETime>2026-04-03T21:39:57Z</vr:POETime>
+                <vr:TypeOfProof>urn:etsi:019102:poetype:validation</vr:TypeOfProof>
+            </vr:POE>
+        </vr:ValidationObject>
+        <vr:ValidationObject id="CERTIFICATE_B-Trust-Root-Qualified-CA_20170425-1528">
+            <vr:ObjectType>urn:etsi:019102:validationObject:certificate</vr:ObjectType>
+            <vr:ValidationObjectRepresentation>
+                <vr:DigestAlgAndValue>
+                    <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+                    <ds:DigestValue>0ziV4dURI/lIyMmZ9/cmQPoFBfvRWrCT6JjbJ90pFOg=</ds:DigestValue>
+                </vr:DigestAlgAndValue>
+            </vr:ValidationObjectRepresentation>
+            <vr:POE>
+                <vr:POETime>2026-04-03T21:39:57Z</vr:POETime>
+                <vr:TypeOfProof>urn:etsi:019102:poetype:validation</vr:TypeOfProof>
+            </vr:POE>
+        </vr:ValidationObject>
+        <vr:ValidationObject id="OCSP_B-Trust-Qualified-OCSP-Authority_20260403-2138">
+            <vr:ObjectType>urn:etsi:019102:validationObject:OCSPResponse</vr:ObjectType>
+            <vr:ValidationObjectRepresentation>
+                <vr:DigestAlgAndValue>
+                    <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+                    <ds:DigestValue>jT/KuCJDQVQykEHBoEERlKUggu3rH2yFdkCD9Dsx2js=</ds:DigestValue>
+                </vr:DigestAlgAndValue>
+            </vr:ValidationObjectRepresentation>
+            <vr:POE>
+                <vr:POETime>2026-04-03T21:39:57Z</vr:POETime>
+                <vr:TypeOfProof>urn:etsi:019102:poetype:validation</vr:TypeOfProof>
+            </vr:POE>
+            <vr:ValidationReport>
+                <vr:ValidationConstraintsEvaluationReport>
+                    <vr:ValidationConstraint>
+                        <vr:ValidationConstraintIdentifier>urn:cef:dss:bbb:formatChecking</vr:ValidationConstraintIdentifier>
+                        <vr:ConstraintStatus>
+                            <vr:Status>urn:etsi:019102:constraintStatus:disabled</vr:Status>
+                        </vr:ConstraintStatus>
+                    </vr:ValidationConstraint>
+                    <vr:ValidationConstraint>
+                        <vr:ValidationConstraintIdentifier>urn:cef:dss:bbb:identificationOfTheSigningCertificate</vr:ValidationConstraintIdentifier>
+                        <vr:ConstraintStatus>
+                            <vr:Status>urn:etsi:019102:constraintStatus:applied</vr:Status>
+                        </vr:ConstraintStatus>
+                        <vr:ValidationStatus>
+                            <vr:MainIndication>urn:etsi:019102:mainindication:passed</vr:MainIndication>
+                        </vr:ValidationStatus>
+                    </vr:ValidationConstraint>
+                    <vr:ValidationConstraint>
+                        <vr:ValidationConstraintIdentifier>urn:cef:dss:bbb:validationContextInitialization</vr:ValidationConstraintIdentifier>
+                        <vr:ConstraintStatus>
+                            <vr:Status>urn:etsi:019102:constraintStatus:disabled</vr:Status>
+                        </vr:ConstraintStatus>
+                    </vr:ValidationConstraint>
+                    <vr:ValidationConstraint>
+                        <vr:ValidationConstraintIdentifier>urn:cef:dss:bbb:cryptographicVerification</vr:ValidationConstraintIdentifier>
+                        <vr:ConstraintStatus>
+                            <vr:Status>urn:etsi:019102:constraintStatus:applied</vr:Status>
+                        </vr:ConstraintStatus>
+                        <vr:ValidationStatus>
+                            <vr:MainIndication>urn:etsi:019102:mainindication:passed</vr:MainIndication>
+                        </vr:ValidationStatus>
+                    </vr:ValidationConstraint>
+                    <vr:ValidationConstraint>
+                        <vr:ValidationConstraintIdentifier>urn:cef:dss:bbb:signatureAcceptanceValidation</vr:ValidationConstraintIdentifier>
+                        <vr:ConstraintStatus>
+                            <vr:Status>urn:etsi:019102:constraintStatus:applied</vr:Status>
+                        </vr:ConstraintStatus>
+                        <vr:ValidationStatus>
+                            <vr:MainIndication>urn:etsi:019102:mainindication:passed</vr:MainIndication>
+                        </vr:ValidationStatus>
+                    </vr:ValidationConstraint>
+                    <vr:ValidationConstraint>
+                        <vr:ValidationConstraintIdentifier>urn:cef:dss:bbb:x509CertificateValidation</vr:ValidationConstraintIdentifier>
+                        <vr:ConstraintStatus>
+                            <vr:Status>urn:etsi:019102:constraintStatus:applied</vr:Status>
+                        </vr:ConstraintStatus>
+                        <vr:ValidationStatus>
+                            <vr:MainIndication>urn:etsi:019102:mainindication:passed</vr:MainIndication>
+                        </vr:ValidationStatus>
+                    </vr:ValidationConstraint>
+                </vr:ValidationConstraintsEvaluationReport>
+                <vr:SignerInformation>
+                    <vr:SignerCertificate VOReference="CERTIFICATE_B-Trust-Qualified-OCSP-Authority_20220421-1245"/>
+                    <vr:Signer>B-Trust Qualified OCSP Authority</vr:Signer>
+                </vr:SignerInformation>
+                <vr:SignatureValidationStatus>
+                    <vr:MainIndication>urn:etsi:019102:mainindication:passed</vr:MainIndication>
+                    <vr:AssociatedValidationReportData>
+                        <vr:TrustAnchor VOReference="CERTIFICATE_B-Trust-Qualified-OCSP-Authority_20220421-1245"/>
+                        <vr:CertificateChain>
+                            <vr:SigningCertificate VOReference="CERTIFICATE_B-Trust-Qualified-OCSP-Authority_20220421-1245"/>
+                            <vr:TrustAnchor VOReference="CERTIFICATE_B-Trust-Qualified-OCSP-Authority_20220421-1245"/>
+                        </vr:CertificateChain>
+                        <vr:CryptoInformation>
+                            <vr:ValidationObjectId VOReference="OCSP_B-Trust-Qualified-OCSP-Authority_20260403-2138"/>
+                            <vr:Algorithm>http://www.w3.org/2001/04/xmldsig-more#rsa-sha256</vr:Algorithm>
+                            <vr:SecureAlgorithm>true</vr:SecureAlgorithm>
+                            <vr:NotAfter>2029-01-01T00:00:00Z</vr:NotAfter>
+                        </vr:CryptoInformation>
+                    </vr:AssociatedValidationReportData>
+                </vr:SignatureValidationStatus>
+            </vr:ValidationReport>
+        </vr:ValidationObject>
+        <vr:ValidationObject id="DOCUMENT_accountRequestEdit-308924-pdf">
+            <vr:ObjectType>urn:etsi:019102:validationObject:signedData</vr:ObjectType>
+            <vr:ValidationObjectRepresentation>
+                <vr:DigestAlgAndValue>
+                    <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+                    <ds:DigestValue>pq/GMq3QIOfy2aa3cDfHwAAtMA3MD3SLwg6uq+e7Yzc=</ds:DigestValue>
+                </vr:DigestAlgAndValue>
+            </vr:ValidationObjectRepresentation>
+            <vr:POE>
+                <vr:POETime>2026-04-03T21:39:57Z</vr:POETime>
+                <vr:TypeOfProof>urn:etsi:019102:poetype:validation</vr:TypeOfProof>
+            </vr:POE>
+        </vr:ValidationObject>
+    </vr:SignatureValidationObjects>
+<ds:Signature Id="id-a11129368780bf3f24437ec1176c4192"><ds:SignedInfo><ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/><ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/><ds:Reference Id="r-id-a11129368780bf3f24437ec1176c4192-1" URI=""><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2002/06/xmldsig-filter2"><dsig-filter2:XPath xmlns:dsig-filter2="http://www.w3.org/2002/06/xmldsig-filter2" Filter="subtract">/descendant::ds:Signature</dsig-filter2:XPath></ds:Transform><ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><ds:DigestValue>UmH+k63af4ILdZtGC8UtevpkKXqxRw80OHcXLFGAgaY=</ds:DigestValue></ds:Reference><ds:Reference Type="http://uri.etsi.org/01903#SignedProperties" URI="#xades-id-a11129368780bf3f24437ec1176c4192"><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><ds:DigestValue>9o9hxI/KpgeQ8qAmcqJkQbx72av7AEwefC6MAXLoXYs=</ds:DigestValue></ds:Reference></ds:SignedInfo><ds:SignatureValue Id="value-id-a11129368780bf3f24437ec1176c4192">rf5RwtguSM4tSXRMlmWx//mFDCpnHIN3vO2nY0DEiR7eqqHMFaol5zpUbonDzXbQxzcEdBshRo+NUsRHClEzD7vFafhYZwgrE/mlutCoM/8Z6cgZZfVcb4LArOxG2Am25WObSlgfBHsARZ7t26NNRIrXt8sKFw9uqwJG2Y96af+Da3h2Tqo4JacUR1etfmptbLZtvJ4SDcGo/w1m3lG+79BS6RapsPfSmRqt6q/HTY7na27/mT0Z/NwJAnNPPWPi6qzAFGr8DFAGlbDHNmxPTztMiITJOrLm+OwBtTSinhO1Umav/MWQPCAXRlCvKVW4KTDbXO4EiRphTg5bG/NU6Q==</ds:SignatureValue><ds:KeyInfo><ds:X509Data><ds:X509Certificate>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</ds:X509Certificate><ds:X509Certificate>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</ds:X509Certificate><ds:X509Certificate>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</ds:X509Certificate></ds:X509Data></ds:KeyInfo><ds:Object><xades:QualifyingProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Target="#id-a11129368780bf3f24437ec1176c4192"><xades:SignedProperties Id="xades-id-a11129368780bf3f24437ec1176c4192"><xades:SignedSignatureProperties><xades:SigningTime>2026-04-03T21:40:29Z</xades:SigningTime><xades:SigningCertificateV2><xades:Cert><xades:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"/><ds:DigestValue>FDROPxUC84dKQh0i2/te+Vo7N3NBV8OU3c6pcYOJE9lBGdihO/yVCncwBvifdteOwu/dIc8GIKQLt5KSEqioHw==</ds:DigestValue></xades:CertDigest><xades:IssuerSerialV2>MIGIMHCkbjBsMQswCQYDVQQGEwJCRzEjMCEGA1UECgwaRXZyb3RydXN0IFRlY2hub2xvZ2llcyBKU0MxGDAWBgNVBGEMD05UUkJHLTIwMzM5NzM1NjEeMBwGA1UEAwwVRXZyb3RydXN0IFNlcnZpY2VzIENBAhQf6KVahDWBkiA4N4Vtxd0LawIOGw==</xades:IssuerSerialV2></xades:Cert></xades:SigningCertificateV2></xades:SignedSignatureProperties><xades:SignedDataObjectProperties><xades:DataObjectFormat ObjectReference="#r-id-a11129368780bf3f24437ec1176c4192-1"><xades:MimeType>application/octet-stream</xades:MimeType></xades:DataObjectFormat></xades:SignedDataObjectProperties></xades:SignedProperties><xades:UnsignedProperties><xades:UnsignedSignatureProperties><xades:SignatureTimeStamp Id="ts-id-a00a4250e71f30a1b4330cc8848ad098ab72d155"><ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/><xades:EncapsulatedTimeStamp Id="ets-id-a00a4250e71f30a1b4330cc8848ad098ab72d155">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</xades:EncapsulatedTimeStamp></xades:SignatureTimeStamp><xades141:TimeStampValidationData Id="tsvd-id-541784eb3d5b46f8c7cc8efbca012680be515286" xmlns:xades141="http://uri.etsi.org/01903/v1.4.1#"><xades:CertificateValues><xades:EncapsulatedX509Certificate>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</xades:EncapsulatedX509Certificate></xades:CertificateValues></xades141:TimeStampValidationData></xades:UnsignedSignatureProperties></xades:UnsignedProperties></xades:QualifyingProperties></ds:Object></ds:Signature></vr:ValidationReport>
