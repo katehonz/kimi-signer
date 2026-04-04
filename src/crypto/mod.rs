@@ -1,10 +1,11 @@
-use crate::models::{AppError, SignatureType, SignRequest, SignatureResult, CertificateInfo};
+use crate::models::{AppError, CertificateInfo, SignRequest, SignatureResult, SignatureType};
 use std::path::PathBuf;
 
-pub mod pkcs11;
 pub mod cades;
 pub mod certificate;
 pub mod cms_builder;
+pub mod pades;
+pub mod pkcs11;
 
 pub use pkcs11::{Pkcs11Module, TokenCertificate};
 
@@ -23,7 +24,7 @@ pub struct SigningService {
 
 impl SigningService {
     pub fn new() -> Self {
-        Self { 
+        Self {
             pkcs11: None,
             current_module_path: None,
         }
@@ -31,13 +32,14 @@ impl SigningService {
 
     /// Initialize PKCS#11 module with a library path
     pub fn initialize_pkcs11(&mut self, library_path: &str) -> Result<(), AppError> {
-        let mut module = Pkcs11Module::new(library_path)
-            .map_err(|e| AppError::Pkcs11(e.to_string()))?;
-        
+        let mut module =
+            Pkcs11Module::new(library_path).map_err(|e| AppError::Pkcs11(e.to_string()))?;
+
         // Open session
-        module.open_session()
+        module
+            .open_session()
             .map_err(|e| AppError::Pkcs11(format!("Failed to open session: {}", e)))?;
-        
+
         self.pkcs11 = Some(module);
         self.current_module_path = Some(library_path.to_string());
         Ok(())
@@ -56,7 +58,10 @@ impl SigningService {
         #[cfg(target_os = "windows")]
         let common_paths = [
             ("B-Trust", r"C:\Windows\System32\btrustpkcs11.dll"),
-            ("B-Trust (SysWOW64)", r"C:\Windows\SysWOW64\btrustpkcs11.dll"),
+            (
+                "B-Trust (SysWOW64)",
+                r"C:\Windows\SysWOW64\btrustpkcs11.dll",
+            ),
             ("StampIT", r"C:\Windows\System32\STAMPP11.dll"),
             ("StampIT (SysWOW64)", r"C:\Windows\SysWOW64\STAMPP11.dll"),
             ("InfoNotary", r"C:\Windows\System32\innp11.dll"),
@@ -69,7 +74,10 @@ impl SigningService {
         let common_paths = [
             ("B-Trust", "/usr/lib/libbtrustpkcs11.so"),
             ("B-Trust (x64)", "/usr/lib64/libbtrustpkcs11.so"),
-            ("B-Trust (x86)", "/usr/lib/x86_64-linux-gnu/libbtrustpkcs11.so"),
+            (
+                "B-Trust (x86)",
+                "/usr/lib/x86_64-linux-gnu/libbtrustpkcs11.so",
+            ),
             ("StampIT", "/usr/lib/libstampp11.so"),
             ("StampIT (x64)", "/usr/lib64/libstampp11.so"),
             ("InfoNotary", "/usr/lib/libinnp11.so"),
@@ -112,7 +120,9 @@ impl SigningService {
         if let Some(ref pkcs11) = self.pkcs11 {
             pkcs11.login(pin)
         } else {
-            Err(AppError::Pkcs11("PKCS#11 module not initialized".to_string()))
+            Err(AppError::Pkcs11(
+                "PKCS#11 module not initialized".to_string(),
+            ))
         }
     }
 
@@ -130,7 +140,9 @@ impl SigningService {
         if let Some(ref pkcs11) = self.pkcs11 {
             pkcs11.enumerate_certificates()
         } else {
-            Err(AppError::Pkcs11("PKCS#11 module not initialized".to_string()))
+            Err(AppError::Pkcs11(
+                "PKCS#11 module not initialized".to_string(),
+            ))
         }
     }
 
@@ -146,12 +158,27 @@ impl SigningService {
 
         // Determine output path
         let output_path = request.output_path.clone().unwrap_or_else(|| {
-            let stem = request.file_path.file_stem()
+            let stem = request
+                .file_path
+                .file_stem()
                 .and_then(|s| s.to_str())
                 .unwrap_or("signed");
-            let parent = request.file_path.parent()
+            let parent = request
+                .file_path
+                .parent()
                 .unwrap_or(std::path::Path::new("."));
-            parent.join(format!("{}{}", stem, request.signature_type.extension()))
+            let ext = match request.signature_type {
+                SignatureType::PAdES => {
+                    let original_ext = request
+                        .file_path
+                        .extension()
+                        .and_then(|s| s.to_str())
+                        .unwrap_or("pdf");
+                    format!("_signed.{}", original_ext)
+                }
+                _ => request.signature_type.extension().to_string(),
+            };
+            parent.join(format!("{}{}", stem, ext))
         });
 
         // For now, we'll use software signing for testing
@@ -169,6 +196,12 @@ impl SigningService {
                 }
                 SignatureType::Detached => {
                     cades::create_detached_signature(&content, &token_cert.der_bytes, &test_key)?
+                }
+                SignatureType::PAdES => {
+                    return Err(AppError::Signing(
+                        "PAdES requires PKCS#11 token - software fallback not available"
+                            .to_string(),
+                    ));
                 }
             }
         };
@@ -192,28 +225,37 @@ impl SigningService {
         sig_type: SignatureType,
         pkcs11: &Pkcs11Module,
     ) -> Result<Vec<u8>, AppError> {
-        // Get private key handle
-        let priv_key = token_cert.private_key_handle
+        let priv_key = token_cert
+            .private_key_handle
             .ok_or_else(|| AppError::Pkcs11("No private key available".to_string()))?;
 
         tracing::info!("Signing with token (private key handle: {:?})", priv_key);
 
-        // Use CMS builder to create CAdES signature with PKCS#11
         match sig_type {
-            SignatureType::Attached => {
-                cms_builder::build_cades_attached_signature(
+            SignatureType::Attached => cms_builder::build_cades_attached_signature(
+                content,
+                &token_cert.der_bytes,
+                pkcs11,
+                priv_key,
+            ),
+            SignatureType::Detached => cms_builder::build_cades_detached_signature(
+                content,
+                &token_cert.der_bytes,
+                pkcs11,
+                priv_key,
+            ),
+            SignatureType::PAdES => {
+                let signer_name =
+                    crate::crypto::certificate::load_certificate_from_der(&token_cert.der_bytes)
+                        .map(|c| c.subject)
+                        .unwrap_or_else(|_| "Unknown Signer".to_string());
+
+                pades::sign_pdf_pades(
                     content,
                     &token_cert.der_bytes,
                     pkcs11,
                     priv_key,
-                )
-            }
-            SignatureType::Detached => {
-                cms_builder::build_cades_detached_signature(
-                    content,
-                    &token_cert.der_bytes,
-                    pkcs11,
-                    priv_key,
+                    &signer_name,
                 )
             }
         }
@@ -229,7 +271,10 @@ impl SigningService {
             .map_err(|e| AppError::Io(format!("Failed to read signature: {}", e)))?;
 
         let original_data = if let Some(path) = original_path {
-            Some(std::fs::read(path).map_err(|e| AppError::Io(format!("Failed to read original: {}", e)))?)
+            Some(
+                std::fs::read(path)
+                    .map_err(|e| AppError::Io(format!("Failed to read original: {}", e)))?,
+            )
         } else {
             None
         };
@@ -242,7 +287,7 @@ impl SigningService {
         if let Some(ref pkcs11) = self.pkcs11 {
             match pkcs11.get_slot_info() {
                 Ok(_) => Ok("PKCS#11 slot available".to_string()),
-                Err(e) => Err(AppError::Pkcs11(e.to_string()))
+                Err(e) => Err(AppError::Pkcs11(e.to_string())),
             }
         } else {
             Err(AppError::Pkcs11("Not initialized".to_string()))

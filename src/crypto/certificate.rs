@@ -18,9 +18,9 @@ pub fn load_certificate_from_file(path: &Path) -> Result<CertificateInfo, AppErr
 
 /// Load certificate from DER bytes
 pub fn load_certificate_from_der(der: &[u8]) -> Result<CertificateInfo, AppError> {
-    use x509_cert::Certificate;
+    use sha1::{Digest, Sha1};
     use x509_cert::der::Decode;
-    use sha1::{Sha1, Digest};
+    use x509_cert::Certificate;
 
     let cert = Certificate::from_der(der)
         .map_err(|e| AppError::Certificate(format!("Failed to parse certificate: {}", e)))?;
@@ -38,7 +38,7 @@ pub fn load_certificate_from_der(der: &[u8]) -> Result<CertificateInfo, AppError
     let mut hasher = Sha1::new();
     hasher.update(der);
     let thumbprint = format!("{:X}", hasher.finalize());
-    
+
     // Format thumbprint with colons
     let thumbprint = thumbprint
         .chars()
@@ -62,25 +62,26 @@ pub fn load_certificate_from_der(der: &[u8]) -> Result<CertificateInfo, AppError
 /// Convert x509_cert time to chrono DateTime
 fn convert_x509_time(time: &x509_cert::time::Time) -> chrono::DateTime<chrono::Utc> {
     use x509_cert::der::Encode;
-    
+
     // Get the time as string from the ASN.1 encoding
     let time_bytes = time.to_der().unwrap_or_default();
-    
+
     // Try to parse as UTF-8 string and convert
-    if let Ok(time_str) = std::str::from_utf8(&time_bytes[2..]) { // Skip tag and length
+    if let Ok(time_str) = std::str::from_utf8(&time_bytes[2..]) {
+        // Skip tag and length
         // Try different formats
         let formats = [
-            "%y%m%d%H%M%SZ",  // UTCTime
-            "%Y%m%d%H%M%SZ",  // GeneralizedTime
+            "%y%m%d%H%M%SZ", // UTCTime
+            "%Y%m%d%H%M%SZ", // GeneralizedTime
         ];
-        
+
         for format in &formats {
             if let Ok(naive) = chrono::NaiveDateTime::parse_from_str(time_str.trim(), format) {
                 return chrono::DateTime::from_naive_utc_and_offset(naive, chrono::Utc);
             }
         }
     }
-    
+
     // Fallback: use current time
     chrono::Utc::now()
 }
@@ -93,40 +94,44 @@ pub fn load_certificate_from_pem(pem: &[u8]) -> Result<CertificateInfo, AppError
         .map_err(|e| AppError::Certificate(format!("Failed to parse PEM certificate: {}", e)))?;
 
     // Use the to_text method or convert via DER
-    let subject = cert.subject_name()
+    let subject = cert
+        .subject_name()
         .entries()
         .map(|e| format!("{:?}", e.object()))
         .collect::<Vec<_>>()
         .join(", ");
-        
-    let issuer = cert.issuer_name()
+
+    let issuer = cert
+        .issuer_name()
         .entries()
         .map(|e| format!("{:?}", e.object()))
         .collect::<Vec<_>>()
         .join(", ");
-    
+
     // Convert serial number to hex string
-    let serial_bn = cert.serial_number().to_bn()
+    let serial_bn = cert
+        .serial_number()
+        .to_bn()
         .map_err(|e| AppError::Certificate(e.to_string()))?;
-    let serial_number = serial_bn.to_hex_str()
+    let serial_number = serial_bn
+        .to_hex_str()
         .map_err(|e| AppError::Certificate(e.to_string()))?
         .to_string();
 
     // Convert ASN1_TIME to chrono
-    let valid_from = asn1_time_to_chrono(cert.not_before())
-        .unwrap_or_else(|_| chrono::Utc::now());
-    let valid_to = asn1_time_to_chrono(cert.not_after())
-        .unwrap_or_else(|_| chrono::Utc::now());
+    let valid_from = asn1_time_to_chrono(cert.not_before()).unwrap_or_else(|_| chrono::Utc::now());
+    let valid_to = asn1_time_to_chrono(cert.not_after()).unwrap_or_else(|_| chrono::Utc::now());
 
     // Get DER bytes for thumbprint
-    let der = cert.to_der()
+    let der = cert
+        .to_der()
         .map_err(|e| AppError::Certificate(e.to_string()))?;
 
-    use sha1::{Sha1, Digest};
+    use sha1::{Digest, Sha1};
     let mut hasher = Sha1::new();
     hasher.update(&der);
     let thumbprint = format!("{:X}", hasher.finalize());
-    
+
     let thumbprint = thumbprint
         .chars()
         .collect::<Vec<_>>()
@@ -147,29 +152,37 @@ pub fn load_certificate_from_pem(pem: &[u8]) -> Result<CertificateInfo, AppError
 }
 
 /// Convert OpenSSL ASN1_TIME to chrono DateTime
-fn asn1_time_to_chrono(asn1_time: &openssl::asn1::Asn1TimeRef) -> Result<chrono::DateTime<chrono::Utc>, Box<dyn std::error::Error>> {
+fn asn1_time_to_chrono(
+    asn1_time: &openssl::asn1::Asn1TimeRef,
+) -> Result<chrono::DateTime<chrono::Utc>, Box<dyn std::error::Error>> {
     // Convert to string and parse
     let time_str = asn1_time.to_string();
-    
+
     // OpenSSL time formats: "Jan  1 00:00:00 2024 GMT" or "20240101000000Z"
     let formats = [
         "%b %e %H:%M:%S %Y GMT",
         "%b %e %H:%M:%S %Y",
         "%Y%m%d%H%M%SZ",
     ];
-    
+
     for format in &formats {
         if let Ok(naive) = chrono::NaiveDateTime::parse_from_str(&time_str, format) {
-            return Ok(chrono::DateTime::from_naive_utc_and_offset(naive, chrono::Utc));
+            return Ok(chrono::DateTime::from_naive_utc_and_offset(
+                naive,
+                chrono::Utc,
+            ));
         }
     }
-    
+
     // Try parsing as date only
     if let Ok(date) = chrono::NaiveDate::parse_from_str(&time_str, "%b %e %Y") {
         let naive = date.and_hms_opt(0, 0, 0).unwrap_or_default();
-        return Ok(chrono::DateTime::from_naive_utc_and_offset(naive, chrono::Utc));
+        return Ok(chrono::DateTime::from_naive_utc_and_offset(
+            naive,
+            chrono::Utc,
+        ));
     }
-    
+
     Err(format!("Failed to parse time: {}", time_str).into())
 }
 
@@ -183,16 +196,14 @@ pub fn validate_certificate_chain(
     // Verify each certificate's signature
     // Check validity dates
     // Verify against trusted roots
-    
+
     // Check if certificate is valid
     if !cert.is_valid() {
         return Ok(false);
     }
 
     // Check if issuer is in trusted roots
-    let issuer_trusted = trusted_roots.iter().any(|root| {
-        root.subject == cert.issuer
-    });
+    let issuer_trusted = trusted_roots.iter().any(|root| root.subject == cert.issuer);
 
     Ok(issuer_trusted)
 }
@@ -201,7 +212,7 @@ pub fn validate_certificate_chain(
 pub fn check_crl(_cert: &CertificateInfo, _crl_data: &[u8]) -> Result<bool, AppError> {
     // Parse CRL
     // Check if certificate serial number is in revoked list
-    
+
     Ok(true) // Not revoked
 }
 

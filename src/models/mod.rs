@@ -7,6 +7,8 @@ pub enum SignatureType {
     Attached,
     /// Detached - подписът е в отделен файл (.p7s)
     Detached,
+    /// PAdES - вграден в PDF подпис (само за .pdf файлове)
+    PAdES,
 }
 
 impl SignatureType {
@@ -14,6 +16,7 @@ impl SignatureType {
         match self {
             SignatureType::Attached => ".p7m",
             SignatureType::Detached => ".p7s",
+            SignatureType::PAdES => ".pdf",
         }
     }
 
@@ -21,6 +24,7 @@ impl SignatureType {
         match self {
             SignatureType::Attached => "Attached/Enveloping (.p7m) - подписът е вграден",
             SignatureType::Detached => "Detached (.p7s) - подписът е отделен",
+            SignatureType::PAdES => "PAdES (.pdf) - вграден в PDF подпис",
         }
     }
 }

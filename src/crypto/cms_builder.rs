@@ -265,7 +265,9 @@ fn build_signer_info_with_attrs(
 }
 
 /// Encode an ASN.1 INTEGER from OpenSSL's Asn1IntegerRef, preserving leading zero if needed
-fn encode_serial_number(serial: &openssl::asn1::Asn1IntegerRef) -> Result<Vec<u8>, openssl::error::ErrorStack> {
+fn encode_serial_number(
+    serial: &openssl::asn1::Asn1IntegerRef,
+) -> Result<Vec<u8>, openssl::error::ErrorStack> {
     let bn = serial.to_bn()?;
     let mut bytes = bn.to_vec();
     if bytes.is_empty() {
