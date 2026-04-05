@@ -112,7 +112,7 @@ cargo build --release
 
 | Платформа | Линк за изтегляне |
 |-----------|-------------------|
-| **Debian 12-13** | [⬇️ Изтегли](https://s3.g.s4.mega.io/smxakyb2sjkiwg33zjlylnnr4wtfvugvzvqkz/cyberbuch/drugi/kimi-signer) |
+| **Debian 12-13** | [⬇️ Изтегли](https://s3.g.s4.mega.io/smxakyb2sjkiwg33zjlylnnr4wtfvugvzvqkz/cyberbuch/drugi/kimi-signer) (обновен: 06.04.2026) |
 
 Изтеглете последната версия от [Releases](https://github.com/katehonz/kimi-signer/releases) страницата.
 

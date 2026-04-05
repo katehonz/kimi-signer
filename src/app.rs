@@ -993,6 +993,8 @@ impl DesktopSignerApp {
             .collapsible(false)
             .resizable(false)
             .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
+            .default_size([400.0, 200.0])
+            .min_size([350.0, 180.0])
             .show(ctx, |ui| {
                 ui.label("Моля, въведете ПИН кода на вашия токен за подписване:");
 
