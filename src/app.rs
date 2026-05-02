@@ -92,8 +92,15 @@ impl DesktopSignerApp {
     /// Load the saved library from config (user must click button)
     pub fn load_saved_library(&mut self) {
         if let Some(ref lib_path) = self.selected_library {
-            if std::path::Path::new(lib_path).exists() {
-                self.status_message = format!("Зареждане на библиотека: {}", lib_path);
+            let path = std::path::Path::new(lib_path);
+            if let Err(e) = crate::utils::validate_library_path(path) {
+                self.status_message = format!("❌ {}", e);
+                self.selected_library = None;
+                self.config.pkcs11_library_path = None;
+                let _ = self.config.save();
+                return;
+            }
+            self.status_message = format!("Зареждане на библиотека: {}", lib_path);
 
                 match self.signing_service.initialize_pkcs11(lib_path) {
                     Ok(_) => {
@@ -104,12 +111,6 @@ impl DesktopSignerApp {
                         self.status_message = format!("❌ Грешка при зареждане: {}", e);
                     }
                 }
-            } else {
-                self.status_message = "❌ Библиотеката не съществува".to_string();
-                self.selected_library = None;
-                self.config.pkcs11_library_path = None;
-                let _ = self.config.save();
-            }
         }
     }
 
@@ -148,18 +149,25 @@ impl DesktopSignerApp {
         }
 
         let path = self.custom_library_path.clone();
+        let path_buf = PathBuf::from(&path);
 
-        if !std::path::Path::new(&path).exists() {
-            self.status_message = "❌ Файлът не съществува".to_string();
+        // Validate library path
+        if let Err(e) = crate::utils::validate_library_path(&path_buf) {
+            self.status_message = format!("❌ {}", e);
             return;
         }
 
         // Add to config
-        let name = PathBuf::from(&path)
-            .file_name()
+        let name = path_buf
+            .file_stem()
             .and_then(|n| n.to_str())
             .unwrap_or("Custom")
             .to_string();
+
+        if let Err(e) = crate::utils::validate_name(&name) {
+            self.status_message = format!("❌ {}", e);
+            return;
+        }
 
         self.config.add_pkcs11_library(&name, &path, None);
 
@@ -195,8 +203,8 @@ impl DesktopSignerApp {
 
     /// Login to token
     pub fn login(&mut self) {
-        if self.pin.is_empty() {
-            self.status_message = "❌ Моля, въведете ПИН код".to_string();
+        if let Err(e) = crate::utils::validate_pin(&self.pin) {
+            self.status_message = format!("❌ {}", e);
             return;
         }
 
@@ -262,6 +270,11 @@ impl DesktopSignerApp {
 
     pub fn select_file(&mut self) {
         if let Some(path) = rfd::FileDialog::new().pick_file() {
+            // Validate file size immediately
+            if let Err(e) = crate::utils::validate_file_size(&path) {
+                self.status_message = format!("❌ {}", e);
+                return;
+            }
             self.selected_file = Some(path.clone());
             self.status_message = "Документ избран".to_string();
             self.signature_result = None;
@@ -280,6 +293,10 @@ impl DesktopSignerApp {
 
     pub fn select_output_dir(&mut self) {
         if let Some(path) = rfd::FileDialog::new().pick_folder() {
+            if let Err(e) = crate::utils::validate_directory_writable(&path) {
+                self.status_message = format!("❌ {}", e);
+                return;
+            }
             self.output_path = Some(path.clone());
             self.config.default_output_dir = Some(path);
             // Save config
@@ -305,12 +322,26 @@ impl DesktopSignerApp {
             return;
         }
 
+        // Warn if certificate is expired or not yet valid
+        if let Some(ref cert) = self.selected_certificate {
+            if !cert.is_valid() {
+                self.status_message = format!(
+                    "⚠ Предупреждение: Сертификатът е {}.",
+                    match cert.validity_status() {
+                        crate::models::CertificateValidity::Expired => "с изтекъл срок",
+                        crate::models::CertificateValidity::NotYetValid => "все още невалиден",
+                        _ => "",
+                    }
+                );
+            }
+        }
+
         self.show_pin_dialog = true;
     }
 
     pub fn perform_signing(&mut self) {
-        if self.pin.is_empty() {
-            self.status_message = "❌ Моля, въведете ПИН код".to_string();
+        if let Err(e) = crate::utils::validate_pin(&self.pin) {
+            self.status_message = format!("❌ {}", e);
             return;
         }
 
@@ -338,6 +369,16 @@ impl DesktopSignerApp {
             }
         };
 
+        // Validate file size before reading
+        if let Some(ref path) = self.selected_file {
+            if let Err(e) = crate::utils::validate_file_size(path) {
+                self.status_message = format!("❌ {}", e);
+                self.is_signing = false;
+                self.pin.clear();
+                return;
+            }
+        }
+
         // Read the document content
         let content = match self.selected_file.as_ref() {
             Some(path) => match std::fs::read(path) {
@@ -360,6 +401,12 @@ impl DesktopSignerApp {
         // Determine output path
         let output_path = match self.output_path.as_ref() {
             Some(dir) => {
+                if let Err(e) = crate::utils::validate_directory_writable(dir) {
+                    self.status_message = format!("❌ {}", e);
+                    self.is_signing = false;
+                    self.pin.clear();
+                    return;
+                }
                 let file_name = self
                     .selected_file
                     .as_ref()
@@ -385,6 +432,13 @@ impl DesktopSignerApp {
                 let parent = input_path
                     .parent()
                     .unwrap_or_else(|| std::path::Path::new("."));
+                // Validate parent directory is writable
+                if let Err(e) = crate::utils::validate_directory_writable(parent) {
+                    self.status_message = format!("❌ {}", e);
+                    self.is_signing = false;
+                    self.pin.clear();
+                    return;
+                }
                 let file_name = input_path
                     .file_stem()
                     .and_then(|s| s.to_str())

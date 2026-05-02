@@ -21,6 +21,17 @@ pub fn sign_pdf_pades(
     private_key_handle: ObjectHandle,
     signer_name: &str,
 ) -> Result<Vec<u8>, AppError> {
+    if signer_name.len() > 512 {
+        return Err(AppError::Signing(
+            "Signer name too long for PDF stamp (max 512 chars)".to_string(),
+        ));
+    }
+
+    if pdf_bytes.len() < 5 || &pdf_bytes[..5] != b"%PDF-" {
+        return Err(AppError::Signing(
+            "Input is not a valid PDF file".to_string(),
+        ));
+    }
     let mut doc = Document::load_mem(pdf_bytes)
         .map_err(|e| AppError::Signing(format!("Failed to load PDF: {}", e)))?;
 
@@ -381,9 +392,24 @@ fn create_stamp_appearance(
 }
 
 fn escape_pdf_string(s: &str) -> String {
-    s.replace('\\', "\\\\")
-        .replace('(', "\\(")
-        .replace(')', "\\)")
+    let mut result = String::with_capacity(s.len());
+    for c in s.chars() {
+        match c {
+            '\\' => result.push_str("\\\\"),
+            '(' => result.push_str("\\("),
+            ')' => result.push_str("\\)"),
+            '\r' => result.push_str("\\r"),
+            '\n' => result.push_str("\\n"),
+            '\t' => result.push_str("\\t"),
+            '\u{0000}' => {} // Skip null bytes entirely
+            c if (c as u32) < 0x20 || c == '\u{007F}' => {
+                // Escape other control characters using octal notation
+                result.push_str(&format!("\\{:03o}", c as u32));
+            }
+            c => result.push(c),
+        }
+    }
+    result
 }
 
 // ── PDF structure helpers ──

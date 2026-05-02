@@ -1,6 +1,6 @@
 [package]
 name = "kimi-signer"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 description = "Open source electronic document signing application with qualified electronic signatures (CAdES/PKCS#7)"
 authors = ["Your Name <your.email@example.com>"]

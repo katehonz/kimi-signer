@@ -32,6 +32,11 @@ impl SigningService {
 
     /// Initialize PKCS#11 module with a library path
     pub fn initialize_pkcs11(&mut self, library_path: &str) -> Result<(), AppError> {
+        // Validate library path
+        let path = std::path::Path::new(library_path);
+        crate::utils::validate_library_path(path)
+            .map_err(|e| AppError::Pkcs11(e))?;
+
         let mut module =
             Pkcs11Module::new(library_path).map_err(|e| AppError::Pkcs11(e.to_string()))?;
 
@@ -152,6 +157,10 @@ impl SigningService {
         request: &SignRequest,
         token_cert: &TokenCertificate,
     ) -> Result<SignatureResult, AppError> {
+        // Validate file size before reading
+        crate::utils::validate_file_size(&request.file_path)
+            .map_err(|e| AppError::Io(e))?;
+
         // Read the file content
         let content = std::fs::read(&request.file_path)
             .map_err(|e| AppError::Io(format!("Failed to read file: {}", e)))?;
@@ -267,6 +276,9 @@ impl SigningService {
         signature_path: &PathBuf,
         original_path: Option<&PathBuf>,
     ) -> Result<bool, AppError> {
+        crate::utils::validate_file_size(signature_path)
+            .map_err(|e| AppError::Io(e))?;
+
         let signature_data = std::fs::read(signature_path)
             .map_err(|e| AppError::Io(format!("Failed to read signature: {}", e)))?;
 

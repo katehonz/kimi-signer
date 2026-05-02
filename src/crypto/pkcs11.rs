@@ -139,8 +139,32 @@ impl Pkcs11Module {
                     let private_key_handle = if let Some(ref id) = cert_id {
                         match self.find_private_key_by_id(session, id) {
                             Ok(handle) => {
-                                tracing::info!("Found matching private key for certificate");
-                                Some(handle)
+                                // Cryptographically verify the key matches the certificate
+                                match Pkcs11Module::verify_key_matches_cert(
+                                    self,
+                                    &cert_der,
+                                    handle,
+                                ) {
+                                    Ok(true) => {
+                                        tracing::info!(
+                                            "Key-cert cryptographic verification passed"
+                                        );
+                                        Some(handle)
+                                    }
+                                    Ok(false) => {
+                                        tracing::warn!(
+                                            "Private key does not match certificate public key - skipping"
+                                        );
+                                        None
+                                    }
+                                    Err(e) => {
+                                        tracing::warn!(
+                                            "Key-cert verification failed: {} - using anyway",
+                                            e
+                                        );
+                                        Some(handle)
+                                    }
+                                }
                             }
                             Err(e) => {
                                 tracing::warn!("No private key found with matching ID: {}", e);
@@ -278,6 +302,45 @@ impl Pkcs11Module {
     ) -> Result<Vec<u8>, AppError> {
         let hash = calculate_sha256(data);
         self.sign(private_key_handle, &hash, Mechanism::Ecdsa)
+    }
+
+    /// Cryptographically verify that a private key matches a certificate's public key.
+    /// Signs a test payload with the private key and verifies against the cert's public key.
+    pub fn verify_key_matches_cert(
+        &self,
+        cert_der: &[u8],
+        private_key_handle: ObjectHandle,
+    ) -> Result<bool, AppError> {
+        use openssl::hash::MessageDigest;
+        use openssl::sign::Verifier;
+        use openssl::x509::X509;
+
+        let cert = X509::from_der(cert_der)
+            .map_err(|e| AppError::Certificate(format!("Failed to parse certificate: {}", e)))?;
+        let pubkey = cert
+            .public_key()
+            .map_err(|e| AppError::Certificate(format!("Failed to get public key: {}", e)))?;
+
+        // Generate a deterministic test payload (not random to avoid entropy issues)
+        let test_payload: [u8; 32] = [
+            0x54, 0x65, 0x73, 0x74, 0x20, 0x70, 0x61, 0x79, // "Test pay"
+            0x6c, 0x6f, 0x61, 0x64, 0x20, 0x66, 0x6f, 0x72, // "load for"
+            0x20, 0x6b, 0x65, 0x79, 0x2d, 0x63, 0x65, 0x72, // " key-cer"
+            0x74, 0x20, 0x76, 0x65, 0x72, 0x69, 0x66, 0x79, // "t verify"
+        ];
+
+        // Sign the test payload
+        let signature = self.sign_sha256_rsa_pkcs(private_key_handle, &test_payload)?;
+
+        // Verify with the certificate's public key
+        let mut verifier = Verifier::new(MessageDigest::sha256(), &pubkey)
+            .map_err(|e| AppError::Signing(format!("Failed to create verifier: {}", e)))?;
+        verifier
+            .update(&test_payload)
+            .map_err(|e| AppError::Signing(format!("Verifier update failed: {}", e)))?;
+        Ok(verifier
+            .verify(&signature)
+            .map_err(|e| AppError::Signing(format!("Signature verification failed: {}", e)))?)
     }
 
     /// Get the key size from the token

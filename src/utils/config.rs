@@ -67,13 +67,23 @@ impl AppConfig {
 
     /// Add a custom PKCS#11 library
     pub fn add_pkcs11_library(&mut self, name: &str, path: &str, description: Option<&str>) {
+        let trimmed_name = name.trim();
+        if trimmed_name.is_empty() {
+            tracing::warn!("Cannot add library with empty name");
+            return;
+        }
+        let trimmed_path = path.trim();
+        if trimmed_path.is_empty() {
+            tracing::warn!("Cannot add library with empty path");
+            return;
+        }
         // Remove if already exists
-        self.custom_pkcs11_libraries.retain(|lib| lib.path != path);
-        
+        self.custom_pkcs11_libraries.retain(|lib| lib.path != trimmed_path);
+
         self.custom_pkcs11_libraries.push(Pkcs11LibraryInfo {
-            name: name.to_string(),
-            path: path.to_string(),
-            description: description.map(|s| s.to_string()),
+            name: trimmed_name.to_string(),
+            path: trimmed_path.to_string(),
+            description: description.map(|s| s.trim().to_string()),
         });
     }
 
